@@ -1,0 +1,72 @@
+.open Steam.db
+.headers on
+.mode column
+
+create table USER(
+ID int not null,
+Fname varchar(20),
+Lname varchar(20),
+date_joined DATE CONSTRAINT date_joined CHECK (date_joined==strftime('%Y-%m-%d',date_joined)),
+primary key (ID)
+);
+
+insert into USER values(1234,'John','Smith','2003-24-11');
+insert into USER values(1111,'Harry','Potter','1980-31-7');
+insert into USER values(2233,'Obi-Wan','Kenobi','1956-3-5');
+
+sqlite> select * from user;
+
+create table GAME(
+ID int not null,
+Name varchar(50),
+Category varchar(20),
+Rating float check(Rating >= 0 and Rating <=5),
+Price float check(Price >= 0),
+Publish_date DATE CONSTRAINT Publish_date CHECK (Publish_date==strftime('%Y-%m-%d',Publish_date)),
+Publisher_name varchar(50),
+Publisher_date_founded DATE CONSTRAINT Publisher_date_founded CHECK (Publisher_date_founded==strftime('%Y-%m-%d',Publisher_date_founded)),
+Developer_name varchar(50),
+Developer_date_founded DATE CONSTRAINT Developer_date_founded CHECK (Developer_date_founded==strftime('%Y-%m-%d',Developer_date_founded)),
+primary key(ID),
+foreign key(Developer_date_founded) references DEVELOPER(Date_founded),
+foreign key(Developer_name) references DEVELOPER(Name),
+foreign key(Publisher_date_founded) references PUBLISHER(Date_founded),
+foreign key(Publisher_name) references PUBLISHER(Name)
+);
+
+create table DEVELOPER(
+Name varchar(50),
+Date_founded DATE CONSTRAINT Date_founded CHECK (Date_founded==strftime('%Y-%m-%d',Date_founded)),
+StateRegion varchar(50),
+city varchar(50),
+primary key(Name,Date_founded)
+);
+
+create table PUBLISHER(
+Name varchar(50),
+Date_founded DATE CONSTRAINT Date_founded CHECK (Date_founded==strftime('%Y-%m-%d',Date_founded)),
+StateRegion varchar(50),
+city varchar(50),
+primary key(Name,Date_founded)
+);
+
+create table REVIEW(
+Review_date DATE CONSTRAINT Review_date CHECK (Review_date==strftime('%Y-%m-%d',Review_date)),
+Score check(score>=0 and score<=5),
+User_ID int not null,
+Game_ID int not null,
+primary key(Game_ID,User_ID,Review_Date),
+foreign key(User_ID) references USER(ID),
+foreign key(Game_ID) references GAME(ID)
+);
+
+create table OWNS(
+Purchase_date DATE CONSTRAINT Purchase_date CHECK (Purchase_date==strftime('%Y-%m-%d',Purchase_date)),
+Purchase_price float check(Purchase_price >= 0),
+Game_ID int not null,
+User_ID int not null,
+primary key(Game_ID,User_ID),
+foreign key(Game_ID) references GAME(ID),
+foreign key(User_ID) references USER(ID)
+);
+
